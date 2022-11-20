@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"os"
 	"strings"
+
+	copl "github.com/kosuke1012/CoPL/CoPL"
 )
 
 func main() {
@@ -30,6 +31,7 @@ func main() {
 	// request body
 	v := url.Values{}
 	ans := `
+	S(S(Z)) is less than S(S(S(Z))) by L-Trans{}
 	S(S(Z)) is less than S(S(S(Z)))  by L-Trans {
 	`
 	v.Add("derivation", ans)
@@ -50,10 +52,9 @@ func main() {
 	}
 	defer res.Body.Close()
 	// read response
-	body, err := io.ReadAll(res.Body)
+	resStr, err := copl.ParseHTMLResult(res.Body)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(res.Status)
-	fmt.Println(string(body))
+	fmt.Println(resStr)
 }
