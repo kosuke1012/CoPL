@@ -20,6 +20,7 @@ func TestParseHTMLResult(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.caseName, func(t *testing.T) {
 			f, err := os.Open(tt.testdata)
+			defer f.Close()
 			assert.NoError(t, err)
 			_, err = ParseHTMLResult(f)
 			assert.NoError(t, err)
