@@ -1,0 +1,4 @@
+workbook:
+  - no: 9
+    game: CompareNat1
+    anspath: ../9.txt
