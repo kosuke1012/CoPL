@@ -31,8 +31,7 @@ func main() {
 	// request body
 	v := url.Values{}
 	ans := `
-	S(S(Z)) is less than S(S(S(Z))) by L-Trans{}
-	S(S(Z)) is less than S(S(S(Z)))  by L-Trans {
+	S(S(Z)) is less than S(S(S(Z))) by L-Succ{}
 	`
 	v.Add("derivation", ans)
 	v.Add("command", "answer")
