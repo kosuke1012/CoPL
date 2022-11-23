@@ -12,40 +12,11 @@ import (
 )
 
 func main() {
-	// URL
-	path := "https://www.fos.kuis.kyoto-u.ac.jp/~igarashi/CoPL/index.cgi"
-	u, err := url.Parse(path)
-	if err != nil {
-		panic(err)
-	}
-	// session cookie
 	loginName := os.Getenv("loginName")
-	c := http.DefaultClient
-	cookie := http.Cookie{Name: "loginas", Value: loginName}
-	jar, err := cookiejar.New(nil)
-	if err != nil {
-		panic(err)
-	}
-	c.Jar = jar
-	c.Jar.SetCookies(u, []*http.Cookie{&cookie})
-	// request body
-	v := url.Values{}
 	ans := `
 	S(S(Z)) is less than S(S(S(Z))) by L-Succ{}
 	`
-	v.Add("derivation", ans)
-	v.Add("command", "answer")
-	v.Add("game", "CompareNat1")
-	v.Add("no", "9")
-	// request header
-	req, err := http.NewRequest("POST", u.String(), strings.NewReader(v.Encode()))
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Referer", "https://www.fos.kuis.kyoto-u.ac.jp/~igarashi/CoPL/index.cgi?qno=9")
-	// post
-	res, err := c.Do(req)
+	res, err := postAnswer(loginName, "9", "CompareNat1", ans)
 	if err != nil {
 		panic(err)
 	}
@@ -56,4 +27,40 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(resStr)
+}
+
+func postAnswer(lname, q, game, ans string) (*http.Response, error) {
+	// URL
+	path := "https://www.fos.kuis.kyoto-u.ac.jp/~igarashi/CoPL/index.cgi"
+	u, err := url.Parse(path)
+	if err != nil {
+		return nil, err
+	}
+	// session cookie
+	c := http.DefaultClient
+	cookie := http.Cookie{Name: "loginas", Value: lname}
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return nil, err
+	}
+	c.Jar = jar
+	c.Jar.SetCookies(u, []*http.Cookie{&cookie})
+	// request body
+	v := url.Values{}
+	v.Add("derivation", ans)
+	v.Add("command", "answer")
+	v.Add("game", game)
+	v.Add("no", q)
+	// request header
+	req, err := http.NewRequest("POST", u.String(), strings.NewReader(v.Encode()))
+	if err != nil {
+		panic(err)
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	// post
+	res, err := c.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	return res, nil
 }
